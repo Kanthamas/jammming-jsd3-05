@@ -27,9 +27,37 @@ export const Spotify = {
 			window.history.pushState("Access Token", null, "/");
 			return accessToken;
 		} else {
-			//// Case 3 (step 81): if access token variable is empty and is not in the URL
+			//// Case 3 (step 81-83): if access token variable is empty and is not in the URL
 
-			return window.location(SPOTIFY_URL);
+			window.location = SPOTIFY_URL;
+		}
+	},
+
+	async search(searchTerm) {
+		try {
+			let searchResultsTracks = await fetch(
+				`https://api.spotify.com/v1/search?type=track&q=${searchTerm}`,
+				{
+					headers: { Authorization: `Bearer ${accessToken}` },
+				}
+			)
+				.then((response) => response.json())
+				.then((jsonResponse) => {
+					if (!jsonResponse.tracks) {
+						return [];
+					}
+					return jsonResponse.tracks.items.map((track) => {
+						return {
+							id: track.id,
+							name: track.name,
+							artist: track.artist[0].name,
+							album: track.album.name,
+							uri: track.uri,
+						};
+					});
+				});
+		} catch (error) {
+			console.error(error);
 		}
 	},
 };
