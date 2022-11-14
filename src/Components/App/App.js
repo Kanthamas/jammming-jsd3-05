@@ -10,12 +10,14 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			searchResults: [{}],
+			searchResults: [],
 			playlistName: "",
-			playlistTracks: [{}],
+			playlistTracks: [],
 		};
 
 		this.addTrack = this.addTrack.bind(this);
+		this.removeTrack = this.removeTrack.bind(this);
+		this.updatePlaylistName = this.updatePlaylistName.bind(this);
 	}
 
 	/// logic part ///
@@ -29,6 +31,18 @@ export default class App extends React.Component {
 		}
 	}
 
+	removeTrack(track) {
+		this.setState({
+			playlistTracks: this.state.playlistTracks.filter(
+				(playlistTrack) => playlistTrack.id !== track.id
+			),
+		});
+	}
+
+	updatePlaylistName(name) {
+		this.setState({ playlistName: name });
+	}
+
 	/// render part ///
 	render() {
 		return (
@@ -39,10 +53,15 @@ export default class App extends React.Component {
 				<div className='App'>
 					{/* <!-- Add a SearchBar component --> */}
 					<div className='App-playlist'>
-						{/* <!-- Add a SearchResults component --> */}
+						<SearchResults
+							searchResults={this.state.searchResults}
+							onAdd={this.addTrack}
+						/>
 						<Playlist
 							playlistName={this.state.playlistName}
 							playlistTracks={this.state.playlistTracks}
+							onRemove={this.removeTrack}
+							onNameChange={this.updatePlaylistName}
 						/>
 					</div>
 				</div>
