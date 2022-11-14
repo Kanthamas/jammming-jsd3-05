@@ -5,9 +5,19 @@ export default class Track extends React.Component {
 	/// constructor part///
 	constructor(props) {
 		super(props);
+		this.renderAction = this.renderAction.bind(this);
 		this.addTrack = this.addTrack.bind(this);
+		this.removeTrack = this.removeTrack.bind(this);
 	}
 	/// logic part ///
+	renderAction() {
+		if (this.props.isRemoval) {
+			return <button onClick={this.removeTrack}>-</button>;
+		} else {
+			return <button onClick={this.addTrack}>+</button>;
+		}
+	}
+
 	addTrack() {
 		this.props.onAdd(this.props.track);
 	}
@@ -26,7 +36,7 @@ export default class Track extends React.Component {
 						{this.props.track.artist} | {this.props.track.album}
 					</p>
 				</div>
-				{/* {/* <button class="Track-action"><!-- + or - will go here --></button> */}
+				{this.renderAction}
 			</div>
 		);
 	}
