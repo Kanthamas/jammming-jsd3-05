@@ -1,12 +1,12 @@
 import "./App.css";
 import React from "react";
 
-import SearchBar from "../SearchBar/SearchBar";
-import SearchResults from "../SearchResults/SearchResults";
-import Playlist from "../Playlist/Playlist";
+import { SearchBar } from "../SearchBar/SearchBar";
+import { SearchResults } from "../SearchResults/SearchResults";
+import { Playlist } from "../Playlist/Playlist";
+import { Spotify } from "../../util/Spotify";
 
 export default class App extends React.Component {
-	/// constructor part ///
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -19,10 +19,9 @@ export default class App extends React.Component {
 		this.removeTrack = this.removeTrack.bind(this);
 		this.updatePlaylistName = this.updatePlaylistName.bind(this);
 		this.savePlaylist = this.savePlaylist.bind(this);
-		this.serach = this.serach.bind(this);
+		this.search = this.search.bind(this);
 	}
 
-	/// logic part ///
 	addTrack(track) {
 		if (
 			this.state.playlistTracks.find((savedTrack) => savedTrack.id === track.id)
@@ -47,13 +46,16 @@ export default class App extends React.Component {
 
 	savePlaylist() {
 		let trackURIs = this.state.playlistTracks.map((track) => track.uri);
+		Spotify.savePlaylist(this.state.playlistName, trackURIs);
+		this.setState({ playlistName: "New Playlist", playlistTracks: [] });
 	}
 
-	serach(term) {
-		console.log(term);
+	search(term) {
+		Spotify.search(term).then((searchResults) =>
+			this.setState({ searchResults: searchResults })
+		);
 	}
 
-	/// render part ///
 	render() {
 		return (
 			<div>
@@ -67,6 +69,7 @@ export default class App extends React.Component {
 							searchResults={this.state.searchResults}
 							onAdd={this.addTrack}
 						/>
+
 						<Playlist
 							playlistName={this.state.playlistName}
 							playlistTracks={this.state.playlistTracks}
